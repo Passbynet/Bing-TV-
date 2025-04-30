@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bing TV 2025</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f2f2f2; /* Light gray background for homepage */
+            color: #333;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Center login initially */
+        }
+
+        /* Login Screen Styles */
+        #signInContainer {
+            text-align: center;
+            padding: 40px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 320px;
+            /* Initially visible */
+        }
+
+        .login-logo {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #0072c6; /* Bing Blue */
+        }
+
+        .login-button {
+            background-color: #0072c6; /* Bing Blue */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 20px; /* Add some space below the logo */
+        }
+
+        .login-button:hover {
+            background-color: #005ea2; /* Darker shade on hover */
+        }
+
+        /* Homepage Styles (initially hidden) */
+        #homeContainer {
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            align-items: stretch; /* Ensure full width */
+            justify-content: flex-start; /* Align content from the top */
+        }
+
+        .top-bar {
+            background-color: rgba(255, 255, 255, 0.8); /* Translucent white */
+            backdrop-filter: blur(10px); /* Subtle blur effect */
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-end; /* Align items to the right for now */
+            align-items: center;
+            border-bottom: 1px solid rgba(221, 221, 221, 0.5);
+        }
+
+        .top-bar-item {
+            color: #555;
+            margin-left: 15px;
+            font-size: 0.9em;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow-y: auto; /* Allow scrolling for content */
+        }
+
+        .left-panel {
+            flex: 0 0 300px; /* Fixed width for left panel (news & stocks) */
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            overflow: hidden; /* Clip rounded corners for internal content */
+            display: flex;
+            flex-direction: column; /* Stack weather, news, stocks */
+            gap: 15px; /* Space between sections */
+        }
+
+        .panel-title {
+            font-size: 1.1em;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        /* Weather Client Styles */
+        .weather-client {
+            /* Add styling for the weather client here */
+        }
+
+        .weather-info {
+            text-align: center;
+        }
+
+        .weather-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .temperature {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .location {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* News Feed Styles */
+        .news-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-headline {
+            font-size: 0.95em;
+            color: #222;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .news-source {
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        /* Stocks Styles */
+        .stock-item-lp { /* Style for stocks in left panel */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stock-item-lp:last-child {
+            border-bottom: none;
+        }
+
+        .stock-symbol-lp {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .stock-price-lp {
+            font-size: 0.85em;
+            color: #333;
+        }
+
+        .stock-change-lp {
+            font-size: 0.8em;
+        }
+
+        .stock-change-lp.positive {
+            color: #198754;
+        }
+
+        .stock-change-lp.negative {
+            color: #dc3545;
+        }
+
+        .right-panel {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* More prominent tiles */
+            grid-auto-rows: 120px; /* Fixed height for tiles to prevent stretching */
+            gap: 15px;
+        }
+
+        .tile {
+            background-color: #ddd; /* Default tile color */
+            border-radius: 8px; /* More rounded corners for Windows 11 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.15s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space out icon and label */
+            min-height: 100px; /* Fallback for content */
+        }
+
+        .tile:hover {
+            transform: scale(1.02);
+        }
+
+        .tile-icon {
+            font-size: 2em;
+            color: #fff; /* White icons on colored backgrounds */
+            margin-bottom: 8px;
+        }
+
+        .tile-label {
+            font-size: 0.9em;
+            color: #fff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Specific tile colors (Windows 10 style - keeping these for now) */
+        .tile-live-tv { background-color: #3f51b5; } /* Deep Purple */
+        .tile-movies-shows { background-color: #e91e63; } /* Pink */
+        .tile-games { background-color: #4caf50; } /* Green */
+        .tile-web-browser { background-color: #03a9f4; } /* Light Blue */
+        .tile-news { background-color: #ff9800; } /* Orange */
+        .tile-weather { background-color: #607d8b; } /* Blue Grey */
+        .tile-music { background-color: #9c27b0; } /* Purple */
+        .tile-settings { background-color: #795548; } /* Brown */
+
+        .taskbar {
+            background-color: rgba(255, 255, 255, 0.7); /* Translucent white */
+            backdrop-filter: blur(10px); /* Subtle blur effect */
+            padding: 10px 20px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center; /* Center icons for a Windows 11 feel */
+            align-items: center;
+            border-top: 1px solid rgba(221, 221, 221, 0.5);
+        }
+
+        .taskbar-icon {
+            font-size: 1.5em;
+            color: #555;
+            margin: 0 15px;
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .taskbar-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .start-button {
+            font-size: 1.5em;
+            color: #0078d4; /* Windows accent color */
+            margin-right: auto; /* Push other icons to the center/right */
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .start-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="signInContainer">
+        <div class="login-logo">Bing TV</div>
+        <button class="login-button" onclick="signIn()">Sign In</button>
+    </div>
+
+    <div id="homeContainer">
+        <div class="top-bar">
+            <span class="top-bar-item">Wi-Fi</span>
+            <span class="top-bar-item">Battery</span>
+            <span class="top-bar-item" id="currentTime"></span>
+        </div>
+
+        <div class="content-area">
+            <div class="left-panel">
+                <div class="weather-client">
+                    <h2 class="panel-title">Weather</h2>
+                    <div class="weather-info">
+                        <span class="weather-icon">☀️</span>
+                        <div class="temperature">72°F</div>
+                        <div class="location">Quincy, MI</div>
+                    </div>
+                    </div>
+                <div id="todayHighlights">
+                    <h2 class="panel-title">Today's Highlights</h2>
+                    </div>
+                <div id="stockTickerLeft">
+                    <h2 class="panel-title">Stocks</h2>
+                    <div class="stock-item-lp">
+                        <span class="stock-symbol-lp">MSFT</span>
+                        <span><span class="stock-price-lp">301.15</span> <span class="stock-change-lp positive">+0.65</span></span>
+                    </div>
+                    <div class="stock-item-lp">
+                        <span class="stock-symbol-lp">AAPL</span>
+                        <span><span class="stock-price-lp">170.55</span> <span class="stock-change-lp positive">+0.35</span></span>
+                    </div>
+                    <div class="stock-item-lp">
+                        <span class="stock-symbol-lp">GOOG</span>
+                        <span><span class="stock-price-lp">2505.20</span> <span class="stock-change-lp positive">+5.10</span></span>
+                    </div>
+                    <div class="stock-item-lp">
+                        <span class="stock-symbol-lp">AMZN</span>
+                        <span><span class="stock-price-lp">181.50</span> <span class="stock-change-lp positive">+0.75</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="tile tile-live-tv">
+                    <div class="tile-icon">📺</div>
+                    <div class="tile-label">Live TV</div>
+                </div>
+                <div class="tile tile-movies-shows">
+                    <div class="tile-icon">🎬</div>
+                    <div class="tile-label">Movies & Shows</div>
+                </div>
+                <div class="tile tile-games">
+                    <div class="tile-icon">🎮</div>
+                    <div class="tile-label">Games</div>
+                </div>
+                <div class="tile tile-web-browser">
+                    <div class="tile-icon">🌐</div>
+                    <div class="tile-label">Web Browser</div>
+                </div>
+                <div class="tile tile-news">
+                    <div class="tile-icon">📰</div>
+                    <div class="tile-label">News</div>
+                </div>
+                <div class="tile tile-weather">
+                    <div class="tile-icon">🌤️</div>
+                    <div class="tile-label">Weather</div>
+                </div>
+                <div class="tile tile-music">
+                    <div class="tile-icon">🎵</div>
+                    <div class="tile-label">Music</div>
+                </div>
+                <div class="tile tile-settings">
+                    <div class="tile-icon">⚙️</div>
+                    <div class="tile-label">Settings</div>
+                </div>
+                </div>
+        </div>
+
+        <div class="taskbar">
+            <span class="start-button">🌐</span> <span class="taskbar-icon">🔍</span>
+            <span class="taskbar-icon">📄</span>
+            <span class="taskbar-icon">🖼️</span>
+        </div>
+
+        </div>
+
+    <script>
+        const signInContainer = document.getElementById('signInContainer');
+        const homeContainer = document.getElementById('homeContainer');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const todayHighlights = document.getElementById('todayHighlights');
+
+        // Initially hide the home container
+        homeContainer.style.display = 'none';
+
+        function signIn() {
+            console.log("Sign In button clicked");
+            signInContainer.style.display = 'none';
+            homeContainer.style.display = 'flex';
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { hour: 'numeric', minute: 'numeric' };
+            currentTimeDisplay.textContent = now.toLocaleTimeString(undefined, timeOptions);
+        }
+
+        updateClock();
+        setInterval(updateClock, 60000); // Update every minute
+
+        function fetchLiveNews() {
+            const apiKey = 'qJQ7M6bJKIdsh8uwM95YqV1TcFEw9UGY';
+            const apiUrl = 'https://api.nytimes.com/svc/topstories/v2/home.json?api-key=' + apiKey;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.results) {
+                        updateHighlightsDisplay(data.results);
+                    } else {
+                        console.warn('No results found in the NYT API response.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching news from NYT API:', error);
+                });
+        }
+
+        function updateHighlightsDisplay(newsArray) {
+            todayHighlights.innerHTML = '<h2 class="panel-title">Today\'s Highlights</h2>'; // Add title back
+            const numberOfItemsToShow = 5;
+            const topNews = newsArray.slice(0, numberOfItemsToShow);
+
+            topNews.forEach(newsItem => {
+                const newsDiv = document.createElement('div');
+                newsDiv.classList.add('news-item');
+
+                const headline = document.createElement('h3');
+                headline.classList.add('news-headline');
+                headline.textContent = newsItem.title;
+
+                const source = document.createElement('p');
+                source.classList.add('news-source');
+                source.textContent = newsItem.source ? newsItem.source : 'News';
+
+                newsDiv.appendChild(headline);
+                newsDiv.appendChild(source);
+                todayHighlights.appendChild(newsDiv);
+            });
+        }
+
+        fetchLiveNews();
+        setInterval(fetchLiveNews, 300000);
+    </script>
+</body>
+</html>
